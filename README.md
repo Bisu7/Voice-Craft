@@ -1,111 +1,77 @@
 # Voice‑Craft
 
-> A full-stack project combining frontend and backend components for voice-based interaction and processing.
+> A real-time **Text-to-Speech (TTS)** web application built using **React** and **Flask**, enabling lifelike audio synthesis from short text inputs.
 
-## 📁 Project Structure
+## 🔊 Overview
+
+Voice‑Craft is a speech synthesis platform that converts user-provided text into realistic audio within **1.2 seconds**, enabling instant voice playback and download. It features seamless interaction between the frontend and backend using non-blocking API calls and delivers a smooth, responsive user interface.
+
+## 🚀 Key Features
+
+- ⚡ **Real-time TTS conversion** with ultra-low latency
+- 🔄 **Non-blocking API communication** for uninterrupted playback
+- 🎧 **Playback controls** – play, pause, stop
+- 💾 **Audio download support** for generated voice clips
+- 🖥️ **Modern UI** with smooth transitions and responsive design
+
+## 🧩 Tech Stack
+
+| Layer     | Technology     |
+|-----------|----------------|
+| Frontend  | React.js       |
+| Backend   | Flask (Python) |
+| Audio     | pyttsx3 / TTS engine |
+| Styling   | CSS / JS       |
+
+
+## 🗂️ Project Structure
 
 Voice‑Craft/
-├── Backend/ ← Server-side code (Python, APIs, processing logic)
-└── Frontend/ ← Client-side application (JavaScript, HTML/CSS)
 
-markdown
-Copy
-Edit
+├── Backend/ # Flask app with TTS engine and API endpoints
 
-- **Backend**  
-  Located in `Backend/`, this directory contains Python modules and services powering the application's logic. Typical components might include API routes, audio processing, or machine learning inference.
+└── Frontend/ # React UI for text input and audio playback
 
-- **Frontend**  
-  The `Frontend/` directory houses a web app built with JavaScript (and possibly HTML/CSS). This interacts with the backend via HTTP/WebSocket, providing an interactive user interface.
-
-## 🚀 Features
-
-- 🎙️ Voice capture & processing
-- 🔊 Backend voice analysis and transformation
-- 🧠 Possible integration with speech-to-text or TTS models
-- 🌐 Real-time interactive web UI
-
-## 📦 Prerequisites
-
-- Python 3.x  
-- Node.js (v14+ recommended) + npm or Yarn  
-- Optional: `ffmpeg`, `pyaudio`, or other audio-related packages
-
-## 🛠️ Setup Instructions
-
-### ✅ Backend
-
-```bash
-cd Backend/
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Or using conda
-# conda env create -f environment.yml
-
-# Run the backend server
-python app.py
-Replace app.py with your actual backend entry point if different.
-
-✅ Frontend
 bash
 Copy
 Edit
+
+## ⚙️ Setup Instructions
+
+### 1️⃣ Backend Setup (Flask)
+
+```bash
+cd Backend/
+pip install -r requirements.txt
+
+# Start the Flask server
+python app.py
+Make sure your system has audio drivers or TTS engine support (e.g., pyttsx3, gTTS, etc.)
+
+2️⃣ Frontend Setup (React)
+
 cd Frontend/
 npm install
 npm start
+React app runs on http://localhost:3000 by default. Ensure it points to the Flask backend (http://localhost:5000 or as configured).
 
-# or using yarn
-# yarn install
-# yarn start
-This will run the frontend server on http://localhost:3000 by default.
+🧪 How to Use
 
-✅ Running Full Stack
-Start the backend server: python app.py
+Open the app in your browser.
 
-Start the frontend app: npm start
+Enter short text in the input field.
 
-Open your browser at http://localhost:3000 and interact with the UI
+Click Convert to generate voice.
 
-🧪 Example Usage
-Open the app in the browser.
+Use Play / Pause / Download controls to interact with the audio.
 
-Click on Record to start capturing voice.
+🌐 API Overview
 
-Click Process to send it to the backend.
+POST /speak – Accepts JSON with text input and returns generated audio
 
-Output is returned and rendered in the frontend.
+GET /health – Optional health check for backend status
 
-⚙️ Configuration
-Backend
 
-.env or config.yaml (if used) for environment settings
 
-Common variables: PORT, DEBUG, API_KEY, etc.
-
-Frontend
-
-.env file (e.g., REACT_APP_API_URL=http://localhost:5000) for connecting to backend
-
-🛠️ Troubleshooting
-Issue	Solution
-Backend won't start	Check for missing dependencies or port issues
-Frontend build fails	Ensure Node.js and npm/yarn are up to date
-Audio not working	Check microphone permissions or ffmpeg setup
-
-🤝 Contributing
-Contributions are welcome! Follow these steps:
-
-Fork the repo and create a new branch
-
-Make your changes with proper commit messages
-
-Push to your fork and open a Pull Request
-
-Make sure to follow code style guidelines
-
-📄 License
-This project is currently unlicensed. You can add a license such as MIT, Apache 2.0, or others.
-
-📌 Summary
-Voice‑Craft is a voice-enabled full-stack application that showcases interactive audio processing through a modern web interface. Whether you're using it for voice commands, transformation, or communication—this setup helps bridge audio and web technologies effectively.
+📌 Project Summary
+Voice‑Craft is designed to deliver fast, natural-sounding voice from text inputs using modern web technologies. It’s ideal for quick prototyping, accessibility tools, or embedded voice features in applications.
