@@ -32,9 +32,7 @@ Voice‑Craft/
 
 └── Frontend/ # React UI for text input and audio playback
 
-bash
-Copy
-Edit
+
 
 ## ⚙️ Setup Instructions
 
@@ -46,14 +44,15 @@ pip install -r requirements.txt
 
 # Start the Flask server
 python app.py
-Make sure your system has audio drivers or TTS engine support (e.g., pyttsx3, gTTS, etc.)
+```
 
 2️⃣ Frontend Setup (React)
-
+```
 cd Frontend/
 npm install
 npm start
 React app runs on http://localhost:3000 by default. Ensure it points to the Flask backend (http://localhost:5000 or as configured).
+```
 
 🧪 How to Use
 
