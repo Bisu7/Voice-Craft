@@ -36,7 +36,7 @@ export default function TextToSpeechApp() {
     if (!audioRef.current) {
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:5000/api/synthesize', {
+        const response = await fetch('https://voice-craft.onrender.com/api/synthesize', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ export default function TextToSpeechApp() {
     if (!text.trim()) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/synthesize', {
+      const response = await fetch('https://voice-craft.onrender.com/api/synthesize', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
