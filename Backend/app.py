@@ -28,7 +28,7 @@ class TTSEngine:
     def __init__(self):
         self.engine = None
         self.temp_files = []
-    
+
     def initialize_engine(self):
         """Initialize the TTS engine"""
         try:
@@ -37,65 +37,65 @@ class TTSEngine:
         except Exception as e:
             print(f"Error initializing TTS engine: {e}")
             return False
-    
+
     def get_available_voices(self):
         """Get list of available voices"""
         if not self.engine:
             if not self.initialize_engine():
                 return []
-        
+
         voices = self.engine.getProperty('voices')
         return [{'id': i, 'name': voice.name} for i, voice in enumerate(voices)]
-    
+
     def synthesize_speech(self, text, voice_config, speed=1.0, pitch=1.0):
         """Convert text to speech with given parameters"""
         if not self.engine:
             if not self.initialize_engine():
                 return None
-        
+
         try:
             # Create temporary file
             temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
             temp_file.close()
-            
+
             # Configure voice
             voices = self.engine.getProperty('voices')
             if voice_config['voice_id'] < len(voices):
                 self.engine.setProperty('voice', voices[voice_config['voice_id']].id)
-            
+
             # Set rate (words per minute) - combine speed adjustment here
             base_rate = voice_config['rate']
             adjusted_rate = int(base_rate * speed)
             self.engine.setProperty('rate', adjusted_rate)
-            
+
             # Set volume
             self.engine.setProperty('volume', 0.9)
-            
+
             # Save to file
             self.engine.save_to_file(text, temp_file.name)
             self.engine.runAndWait()
-            
+
             # Simple pitch adjustment by modifying the WAV file directly
             if pitch != 1.0:
                 self.adjust_pitch_simple(temp_file.name, pitch)
-            
+
             self.temp_files.append(temp_file.name)
             return temp_file.name
-            
+
         except Exception as e:
             print(f"Error synthesizing speech: {e}")
             return None
-    
+
     def adjust_pitch_simple(self, wav_file, pitch_factor):
         """Simple pitch adjustment by changing sample rate"""
         try:
             with wave.open(wav_file, 'rb') as wav_in:
                 params = wav_in.getparams()
                 frames = wav_in.readframes(params.nframes)
-            
+
             # Adjust sample rate to change pitch
             new_sample_rate = int(params.framerate * pitch_factor)
-            
+
             # Write back with new sample rate
             with wave.open(wav_file, 'wb') as wav_out:
                 wav_out.setparams((
@@ -107,10 +107,10 @@ class TTSEngine:
                     params.compname
                 ))
                 wav_out.writeframes(frames)
-                
+
         except Exception as e:
             print(f"Error adjusting pitch: {e}")
-    
+
     def cleanup_temp_files(self):
         """Clean up temporary files"""
         for file_path in self.temp_files:
@@ -123,6 +123,19 @@ class TTSEngine:
 
 # Global TTS engine instance
 tts_engine = TTSEngine()
+
+@app.route('/')
+def index():
+    """A simple welcome message for the root URL."""
+    return jsonify({
+        'message': 'Welcome to the Voice-Craft Text-to-Speech API!',
+        'status': 'healthy',
+        'endpoints': {
+            'GET /api/voices': 'Get available voices and presets.',
+            'POST /api/synthesize': 'Synthesize speech from text.',
+            'GET /api/health': 'Perform a health check of the service.'
+        }
+    })
 
 @app.route('/api/voices', methods=['GET'])
 def get_voices():
@@ -147,40 +160,40 @@ def synthesize_speech():
     """Synthesize speech from text"""
     try:
         data = request.get_json()
-        
+
         # Validate input
         if not data or 'text' not in data:
             return jsonify({'error': 'Text is required'}), 400
-        
+
         text = data['text'].strip()
         if not text:
             return jsonify({'error': 'Text cannot be empty'}), 400
-        
+
         if len(text) > 1000:
             return jsonify({'error': 'Text too long (max 1000 characters)'}), 400
-        
+
         # Get parameters
         voice_id = data.get('voice', 'female-standard')
         speed = float(data.get('speed', 1.0))
         pitch = float(data.get('pitch', 1.0))
         is_download = data.get('download', False)
-        
+
         # Validate parameters
         if voice_id not in VOICE_CONFIG:
             voice_id = 'female-standard'
-        
+
         speed = max(0.5, min(2.0, speed))
         pitch = max(0.5, min(2.0, pitch))
-        
+
         # Get voice configuration
         voice_config = VOICE_CONFIG[voice_id]
-        
+
         # Synthesize speech
         audio_file = tts_engine.synthesize_speech(text, voice_config, speed, pitch)
-        
+
         if not audio_file:
             return jsonify({'error': 'Failed to synthesize speech'}), 500
-        
+
         # Return WAV file directly (no MP3 conversion to avoid pydub dependency)
         return send_file(
             audio_file,
@@ -188,7 +201,7 @@ def synthesize_speech():
             as_attachment=is_download,
             download_name='speech.wav'
         )
-        
+
     except Exception as e:
         print(f"Error in synthesize_speech: {e}")
         return jsonify({'error': 'Internal server error'}), 500
@@ -223,9 +236,10 @@ cleanup_thread.start()
 if __name__ == '__main__':
     print("Starting Text-to-Speech API Server...")
     print("Available endpoints:")
+    print("  GET  /")
     print("  GET  /api/voices     - Get available voices")
     print("  POST /api/synthesize - Synthesize speech from text")
     print("  GET  /api/health     - Health check")
     print("  POST /api/cleanup    - Clean up temporary files")
-    
+
     app.run(host='0.0.0.0', port=5000, debug=True)
